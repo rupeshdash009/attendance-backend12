@@ -1,5 +1,6 @@
 require("dotenv").config();
 console.log("MONGO_URI:", process.env.MONGO_URI); 
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -8,6 +9,8 @@ const attendanceRoutes = require("./routes/attendanceRoutes");
 const authRoutes = require("./routes/authRoutes");
 
 const app = express();
+
+// Middleware
 app.use(express.json());
 app.use(cors());
 
