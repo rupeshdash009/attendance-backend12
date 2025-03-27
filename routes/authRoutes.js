@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const authMiddleware = require("../middleware/authMiddleware"); // Ensure it's correctly imported
 
 const router = express.Router();
 
@@ -34,7 +35,7 @@ router.post("/login", async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || "your_jwt_secret", { expiresIn: "1h" });
 
     res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
   } catch (error) {
@@ -42,16 +43,26 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// Get current logged-in user
+router.get("/me", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("name email");
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-router.get("/me", async (req, res) => {
-    try {
-      const user = await User.findById(req.user.id).select("-password");
-      res.json({ user }); // ✅ FIX: Ensure user object is returned
-    } catch (err) {
-      res.status(500).json({ message: "Server error" });
-    }
-  });
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
-
+// Get all users (for admin or general access)
+router.get("/users", async (req, res) => {
+  try {
+    const users = await User.find({}, "-password"); // Exclude passwords for security
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;
