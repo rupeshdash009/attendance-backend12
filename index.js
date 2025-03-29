@@ -16,13 +16,15 @@ app.use(cors());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/bookings", bookingRoutes);
-app.use(cors({
-  origin: [
-    'https://attendance-portal01.vercel.app/', // Your Vercel frontend URL
-    'http://localhost:5000' // For local development
-  ],
-  credentials: true, // Allow cookies
-})); 
+// app.use(cors({
+//   origin: '*', [
+//     'https://attendance-portal01.vercel.app/', // Your Vercel frontend URL
+//     'http://localhost:5000' // For local development
+//   ],
+//   credentials: true, // Allow cookies
+// })); 
+
+app.use(cors({origin:'*', credentials:true}))
 
 const PORT = process.env.PORT || 5000;
 mongoose
