@@ -18,7 +18,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use(cors({
   origin: [
-    'https://your-frontend.vercel.app', // Your Vercel frontend URL
+    'https://attendance-portal01.vercel.app/', // Your Vercel frontend URL
     'http://localhost:5000' // For local development
   ],
   credentials: true, // Allow cookies
