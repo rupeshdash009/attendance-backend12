@@ -51,14 +51,7 @@ const loginUser = async (req, res) => {
     // Generate token (example using JWT)
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    // Set HTTP-only cookie (place this in the response)
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // true in production (HTTPS)
-      sameSite: 'none', // Required for cross-site cookies (if frontend/backend are separate)
-      domain: process.env.NODE_ENV === 'production' ? '.https://attendance-portal01.vercel.app/' : undefined, // Replace with your domain
-      maxAge: 3600000 // 1 hour expiry
-    });
+  
 
     res.status(200).json({ success: true, user });
   } catch (err) {

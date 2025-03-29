@@ -34,10 +34,9 @@ mongoose.connect(process.env.MONGO_URI)
   });
 
   // Allow requests from your frontend (Vercel domain)
-app.use(
-  cors({
-      origin: "https://attendance-portal01.vercel.app/",  // Replace with your frontend URL
-      methods: "GET,POST,PUT,DELETE",
-      credentials: true
-  })
-);
+  app.use(cors());
+
+  // ✅ Test Route to check CORS
+  app.get("/test", (req, res) => {
+    res.json({ message: "CORS is working!" });
+  });
