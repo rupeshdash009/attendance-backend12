@@ -14,7 +14,7 @@ app.use(express.json());
 // ✅ Correct CORS Configuration
 app.use(
   cors({
-    origin: ['http://localhost:5173'], // Allow frontend
+    origin: ['https://attendance-portal01.vercel.app/'], // Allow frontend
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true, // Enable cookies/auth headers
