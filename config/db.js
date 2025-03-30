@@ -4,7 +4,7 @@ require('dotenv').config(); // Optional, if not already in index.js
 
 const connectDB = async () => {
     try {
-        await mongoose.connect("mongodb+srv://rupeshdash20:2W4LNi93lZk93mBd@cluster0.gt8be.mongodb.net", {
+        await mongoose.connect("mongodb+srv://rupeshdash20:2W4LNi93lZk93mBd@cluster0.gt8be.mongodb.net/", {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
