@@ -37,7 +37,7 @@ app.listen(PORT, () => {
 });
 // Models
 // const Course = require('./models/Course');
-const Seat = require('./models/Seat');
+// const Seat = require('./models/Seat');
 
 // Routes
 app.get('/api/seats', async (req, res) => {
@@ -59,29 +59,29 @@ app.get('/', (req, res) => {
   res.send('Backend is running successfully 🚀');
 });
 
-app.post('/api/book', async (req, res) => {
-  try {
-    const { seatId, course, studentName } = req.body;
+// app.post('/api/book', async (req, res) => {
+//   try {
+//     const { seatId, course, studentName } = req.body;
     
-    const seat = await Seat.findOne({ _id: seatId, course });
-    if (!seat) {
-      return res.status(404).json({ message: 'Seat not found' });
-    }
+//     const seat = await Seat.findOne({ _id: seatId, course });
+//     if (!seat) {
+//       return res.status(404).json({ message: 'Seat not found' });
+//     }
     
-    if (seat.isBooked) {
-      return res.status(400).json({ message: 'Seat already booked' });
-    }
+//     if (seat.isBooked) {
+//       return res.status(400).json({ message: 'Seat already booked' });
+//     }
     
-    seat.isBooked = true;
-    seat.studentName = studentName;
-    seat.bookedAt = new Date();
+//     seat.isBooked = true;
+//     seat.studentName = studentName;
+//     seat.bookedAt = new Date();
     
-    await seat.save();
-    res.json(seat);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+//     await seat.save();
+//     res.json(seat);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
 
 // Start server
 app.listen(PORT, () => {
