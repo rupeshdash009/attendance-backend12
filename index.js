@@ -4,14 +4,12 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const connectDB = require('./config/db'); // Ensure this path is correct
 
-connectDB();
-
 const app = express();
 
 // Middleware
 app.use(express.json());
 
-// ✅ Correct CORS Configuration
+// ✅ CORS Configuration
 app.use(
   cors({
     origin: ['http://localhost:5173'], // Allow frontend
@@ -21,27 +19,17 @@ app.use(
   })
 );
 
-// ✅ Fixed Signup Endpoint (Correct Route Path)
+// ✅ Connect to Database (with environment variable)
+const MONGO_URI = process.env.MONGO_URI || "your_default_connection_string_here";
+mongoose.connect(MONGO_URI)
+  .then(() => console.log('MongoDB connected'))
+  .catch((err) => console.error('MongoDB connection error:', err));
+
+// Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/booking', require('./routes/bookingRoutes')); // Ensure this path is correct
 
-// Central error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
-});
-
-const PORT = process.env.PORT || 8080;
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
-// Models
-// const Course = require('./models/Course');
-// const Seat = require('./models/Seat');
-
-// Routes
+// Example route to fetch seats
 app.get('/api/seats', async (req, res) => {
   try {
     const { course } = req.query;
@@ -56,36 +44,19 @@ app.get('/api/seats', async (req, res) => {
   }
 });
 
-// ✅ Home route to show backend is running
+// Home route
 app.get('/', (req, res) => {
   res.send('Backend is running successfully 🚀');
 });
 
-// app.post('/api/book', async (req, res) => {
-//   try {
-//     const { seatId, course, studentName } = req.body;
-    
-//     const seat = await Seat.findOne({ _id: seatId, course });
-//     if (!seat) {
-//       return res.status(404).json({ message: 'Seat not found' });
-//     }
-    
-//     if (seat.isBooked) {
-//       return res.status(400).json({ message: 'Seat already booked' });
-//     }
-    
-//     seat.isBooked = true;
-//     seat.studentName = studentName;
-//     seat.bookedAt = new Date();
-    
-//     await seat.save();
-//     res.json(seat);
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// });
+// Central error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
+});
 
-// Start server
+// Server Setup
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
