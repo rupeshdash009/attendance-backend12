@@ -3,7 +3,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const connectDB = require('./config/db'); // Ensure this path is correct
-
+const bookingsRouter = require('./routes/bookingRoutes');
+// const Booking = mongoose.model('Booking', bookingSchema);
+const Booking = require('./models/Booking');  // Correct import
+// import Course from './models/Course';
+// import Seat from './models/Seat';
 connectDB();
 
 const app = express();
@@ -34,4 +38,65 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
+});
+// Models
+const Course = require('./models/Course');
+const Seat = require('./models/Seat');
+
+// Routes
+app.get('/api/courses', async (req, res) => {
+  try {
+    const courses = await Course.find();
+    res.json(courses);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.get('/api/seats', async (req, res) => {
+  try {
+    const { course } = req.query;
+    if (!course) {
+      return res.status(400).json({ message: 'Course is required' });
+    }
+
+    const seats = await Seat.find({ course });
+    res.json(seats);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ✅ Home route to show backend is running
+app.get('/', (req, res) => {
+  res.send('Backend is running successfully 🚀');
+});
+
+app.post('/api/book', async (req, res) => {
+  try {
+    const { seatId, course, studentName } = req.body;
+    
+    const seat = await Seat.findOne({ _id: seatId, course });
+    if (!seat) {
+      return res.status(404).json({ message: 'Seat not found' });
+    }
+    
+    if (seat.isBooked) {
+      return res.status(400).json({ message: 'Seat already booked' });
+    }
+    
+    seat.isBooked = true;
+    seat.studentName = studentName;
+    seat.bookedAt = new Date();
+    
+    await seat.save();
+    res.json(seat);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
