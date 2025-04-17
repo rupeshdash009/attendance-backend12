@@ -36,7 +36,7 @@ app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
 // Models
-const Course = require('./models/Course');
+// const Course = require('./models/Course');
 const Seat = require('./models/Seat');
 
 // Routes
