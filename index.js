@@ -35,10 +35,9 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-const PORT = process.env.PORT || 8080;
-
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
 // Models
 const Course = require('./models/Course');
@@ -52,6 +51,11 @@ app.get('/api/courses', async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+});
+
+// ✅ This should be OUTSIDE, separately
+app.get('/', (req, res) => {
+  res.send('Backend is running successfully 🚀');
 });
 
 app.get('/api/seats', async (req, res) => {
@@ -68,10 +72,6 @@ app.get('/api/seats', async (req, res) => {
   }
 });
 
-// ✅ Home route to show backend is running
-app.get('/', (req, res) => {
-  res.send('Backend is running successfully 🚀');
-});
 
 app.post('/api/book', async (req, res) => {
   try {
