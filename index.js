@@ -53,11 +53,6 @@ app.get('/api/courses', async (req, res) => {
   }
 });
 
-// ✅ This should be OUTSIDE, separately
-app.get('/', (req, res) => {
-  res.send('Backend is running successfully 🚀');
-});
-
 app.get('/api/seats', async (req, res) => {
   try {
     const { course } = req.query;
