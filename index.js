@@ -3,11 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const connectDB = require('./config/db'); // Ensure this path is correct
-const bookingsRouter = require('./routes/bookingRoutes');
-// const Booking = mongoose.model('Booking', bookingSchema);
-const Booking = require('./models/Booking');  // Correct import
-// import Course from './models/Course';
-// import Seat from './models/Seat';
+
 connectDB();
 
 const app = express();
@@ -44,15 +40,6 @@ const Course = require('./models/Course');
 const Seat = require('./models/Seat');
 
 // Routes
-app.get('/api/courses', async (req, res) => {
-  try {
-    const courses = await Course.find();
-    res.json(courses);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
 app.get('/api/seats', async (req, res) => {
   try {
     const { course } = req.query;
@@ -67,6 +54,10 @@ app.get('/api/seats', async (req, res) => {
   }
 });
 
+// ✅ Home route to show backend is running
+app.get('/', (req, res) => {
+  res.send('Backend is running successfully 🚀');
+});
 
 app.post('/api/book', async (req, res) => {
   try {
