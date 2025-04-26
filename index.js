@@ -10,14 +10,12 @@ const app = express();
 app.use(express.json());
 
 // ✅ CORS Configuration
-app.use(
-  cors({
-    origin: ['https://attendance-portal01.vercel.app/'], // Allow frontend
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true, // Enable cookies/auth headers
-  })
-);
+// const cors = require('cors');
+app.use(cors({
+  origin: 'https://attendance-portal01.vercel.app', // your frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 
 // ✅ Connect to Database (with environment variable)
 const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://rupeshdash20:2W4LNi93lZk93mBd@cluster0.gt8be.mongodb.net/";
