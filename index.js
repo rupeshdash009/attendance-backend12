@@ -12,7 +12,7 @@ app.use(express.json());
 // ✅ CORS Configuration
 app.use(
   cors({
-    origin: ['http://localhost:5173'], // Allow frontend
+    origin: ['https://attendance-portal01.vercel.app/'], // Allow frontend
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true, // Enable cookies/auth headers
@@ -20,7 +20,7 @@ app.use(
 );
 
 // ✅ Connect to Database (with environment variable)
-const MONGO_URI = process.env.MONGO_URI || "your_default_connection_string_here";
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://rupeshdash20:2W4LNi93lZk93mBd@cluster0.gt8be.mongodb.net/";
 mongoose.connect(MONGO_URI)
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error('MongoDB connection error:', err));
