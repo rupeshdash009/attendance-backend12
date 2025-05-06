@@ -1,60 +1,85 @@
+// Import necessary modules
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const connectDB = require('./config/db'); // Ensure this path is correct
+
+// Models
+const { Seat, SeatBooking } = require('./models/seatModels');
+// Routes
+const seatRoutes = require('./routes/seats');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(express.json());
-
-// ✅ CORS Configuration
-// const cors = require('cors');
 app.use(cors({
-  origin: 'https://attendance-portal01.vercel.app', // your frontend URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: [
+    "http://localhost:5173", // Frontend local dev
+    "https://attendance-portal01.vercel.app", // Production URL
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
 
-// ✅ Connect to Database (with environment variable)
-const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://rupeshdash20:2W4LNi93lZk93mBd@cluster0.gt8be.mongodb.net/";
+// Database connection
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://rupeshdash20:2W4LNi93lZk93mBd@cluster0.gt8be.mongodb.net";
 mongoose.connect(MONGO_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch((err) => console.error('MongoDB connection error:', err));
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch((err) => console.error('❌ MongoDB connection error:', err));
 
-// Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/booking', require('./routes/bookingRoutes')); // Ensure this path is correct
+// Routes for Auth and Seat Management
+app.use('/api/auth', authRoutes);
+app.use('/api/seats', seatRoutes);
 
-// Example route to fetch seats
-app.get('/api/seats', async (req, res) => {
+// Route to get booked seats for a specific course (BBA/BCA)
+app.get('/api/seats/:course', async (req, res) => {
+  const { course } = req.params;
   try {
-    const { course } = req.query;
-    if (!course) {
-      return res.status(400).json({ message: 'Course is required' });
-    }
-
-    const seats = await Seat.find({ course });
-    res.json(seats);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    const bookedSeats = await getBookedSeats(course);
+    res.json(bookedSeats); // Send the booked seats as JSON
+  } catch (error) {
+    console.error('Error fetching booked seats:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
-// Home route
-app.get('/', (req, res) => {
-  res.send('Backend is running successfully 🚀');
+// Route to book a seat (send booking data and seat number)
+app.post('/api/book-seat', async (req, res) => {
+  const { seatNumber, course, name, phone, email, passoutYear, percentage } = req.body;
+  try {
+    const newBooking = new SeatBooking({
+      seatNumber,
+      course,
+      name,
+      phone,
+      email,
+      passoutYear,
+      percentage,
+    });
+
+    await newBooking.save();
+    res.status(201).json({ message: "Seat booked successfully" });
+  } catch (error) {
+    console.error("❌ Error saving booking:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
-// Central error handling middleware
+// Default route for basic check
+app.get('/', (req, res) => {
+  res.send('✅ Backend is running successfully 🚀');
+});
+
+// Centralized error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('❌ Error:', err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// Server Setup
-const PORT = process.env.PORT || 5000;
+// Start the server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
