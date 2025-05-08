@@ -3,14 +3,12 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const userRoutes = require('./routes/userRoutes');
 
 // Models
 const { Seat, SeatBooking } = require('./models/seatModels');
 // Routes
 const seatRoutes = require('./routes/seats');
 const authRoutes = require('./routes/authRoutes');
-
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -75,7 +73,6 @@ app.get('/', (req, res) => {
   res.send('✅ Backend is running successfully 🚀');
 });
 
-app.use('/api/users', userRoutes);
 // Centralized error handler
 app.use((err, req, res, next) => {
   console.error('❌ Error:', err.stack);
