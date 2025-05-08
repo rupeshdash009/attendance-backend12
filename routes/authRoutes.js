@@ -9,13 +9,21 @@ const router = express.Router();
 // User Registration
 router.post("/signup", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, program, year, semester, rollNumber } = req.body;
 
     let user = await User.findOne({ email });
     if (user) return res.status(400).json({ message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    user = new User({ name, email, password: hashedPassword });
+    user = new User({
+      name,
+      email,
+      password: hashedPassword,
+      program,
+      year,
+      semester,
+      rollNumber
+    });
 
     await user.save();
     res.status(201).json({ message: "User registered successfully" });
@@ -37,7 +45,7 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || "your_jwt_secret", { expiresIn: "1h" });
 
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
+    res.json({ token, user: { id: user._id, name: user.name, email: user.email, program: user.program, year: user.year, semester: user.semester, rollNumber: user.rollNumber } });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -46,7 +54,7 @@ router.post("/login", async (req, res) => {
 // Get current logged-in user
 router.get("/me", authMiddleware, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("name email");
+    const user = await User.findById(req.user.id).select("name email program year semester rollNumber");
     if (!user) return res.status(404).json({ message: "User not found" });
 
     res.json({ user });
